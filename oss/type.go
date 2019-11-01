@@ -302,6 +302,7 @@ type BucketInfo struct {
 	ExtranetEndpoint string    `xml:"ExtranetEndpoint"`         // Bucket external endpoint
 	IntranetEndpoint string    `xml:"IntranetEndpoint"`         // Bucket internal endpoint
 	ACL              string    `xml:"AccessControlList>Grant"`  // Bucket ACL
+	RedundancyType   string    `xml:"DataRedundancyType"`       // Bucket DataRedundancyType
 	Owner            Owner     `xml:"Owner"`                    // Bucket owner
 	StorageClass     string    `xml:"StorageClass"`             // Bucket storage class
 	SseRule          SSERule   `xml:"ServerSideEncryptionRule"` // Bucket ServerSideEncryptionRule
@@ -692,8 +693,9 @@ func decodeListMultipartUploadResult(result *ListMultipartUploadResult) error {
 
 // createBucketConfiguration defines the configuration for creating a bucket.
 type createBucketConfiguration struct {
-	XMLName      xml.Name         `xml:"CreateBucketConfiguration"`
-	StorageClass StorageClassType `xml:"StorageClass,omitempty"`
+	XMLName            xml.Name           `xml:"CreateBucketConfiguration"`
+	StorageClass       StorageClassType   `xml:"StorageClass,omitempty"`
+	DataRedundancyType DataRedundancyType `xml:"DataRedundancyType,omitempty"`
 }
 
 // LiveChannelConfiguration defines the configuration for live-channel

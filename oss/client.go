@@ -103,18 +103,27 @@ func (client Client) CreateBucket(bucketName string, options ...Option) error {
 
 	buffer := new(bytes.Buffer)
 
-	isOptSet, val, _ := isOptionSet(options, storageClass)
-	if isOptSet {
-		cbConfig := createBucketConfiguration{StorageClass: val.(StorageClassType)}
-		bs, err := xml.Marshal(cbConfig)
-		if err != nil {
-			return err
-		}
-		buffer.Write(bs)
+	var cbConfig createBucketConfiguration
+	cbConfig.StorageClass = StorageStandard
+	cbConfig.DataRedundancyType = RedundancyLRS
 
-		contentType := http.DetectContentType(buffer.Bytes())
-		headers[HTTPHeaderContentType] = contentType
+	isStorageSet, valStroage, _ := isOptionSet(options, storageClass)
+	isRedundancySet, valRedundancy, _ := isOptionSet(options, redundancyType)
+	if isStorageSet {
+		cbConfig.StorageClass = valStroage.(StorageClassType)
 	}
+
+	if isRedundancySet {
+		cbConfig.DataRedundancyType = valRedundancy.(DataRedundancyType)
+	}
+
+	bs, err := xml.Marshal(cbConfig)
+	if err != nil {
+		return err
+	}
+	buffer.Write(bs)
+	contentType := http.DetectContentType(buffer.Bytes())
+	headers[HTTPHeaderContentType] = contentType
 
 	params := map[string]interface{}{}
 	resp, err := client.do("PUT", bucketName, params, headers, buffer, options...)

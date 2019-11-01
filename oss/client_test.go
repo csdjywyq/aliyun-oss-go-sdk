@@ -334,6 +334,49 @@ func (s *OssClientSuite) TestCreateBucket(c *C) {
 	}
 }
 
+func (s *OssClientSuite) TestCreateBucketRedundancyType(c *C) {
+	bucketNameTest := bucketNamePrefix + randLowStr(6)
+	client, err := New(endpoint, accessID, accessKey)
+	c.Assert(err, IsNil)
+
+	// CreateBucket creates without property
+	err = client.CreateBucket(bucketNameTest)
+	c.Assert(err, IsNil)
+	client.DeleteBucket(bucketNameTest)
+	time.Sleep(timeoutInOperation)
+
+	// CreateBucket creates with RedundancyZRS
+	err = client.CreateBucket(bucketNameTest, RedundancyType(RedundancyZRS))
+	c.Assert(err, IsNil)
+
+	res, err := client.GetBucketInfo(bucketNameTest)
+	c.Assert(err, IsNil)
+	c.Assert(res.BucketInfo.RedundancyType, Equals, string(RedundancyZRS))
+	client.DeleteBucket(bucketNameTest)
+	time.Sleep(timeoutInOperation)
+
+	// CreateBucket creates with RedundancyLRS
+	err = client.CreateBucket(bucketNameTest, RedundancyType(RedundancyLRS))
+	c.Assert(err, IsNil)
+
+	res, err = client.GetBucketInfo(bucketNameTest)
+	c.Assert(err, IsNil)
+	c.Assert(res.BucketInfo.RedundancyType, Equals, string(RedundancyLRS))
+	c.Assert(res.BucketInfo.StorageClass, Equals, string(StorageStandard))
+	client.DeleteBucket(bucketNameTest)
+	time.Sleep(timeoutInOperation)
+
+	// CreateBucket creates with ACLPublicRead RedundancyZRS
+	err = client.CreateBucket(bucketNameTest, ACL(ACLPublicRead), RedundancyType(RedundancyZRS))
+	c.Assert(err, IsNil)
+
+	res, err = client.GetBucketInfo(bucketNameTest)
+	c.Assert(err, IsNil)
+	c.Assert(res.BucketInfo.RedundancyType, Equals, string(RedundancyZRS))
+	c.Assert(res.BucketInfo.ACL, Equals, string(ACLPublicRead))
+	client.DeleteBucket(bucketNameTest)
+}
+
 // TestCreateBucketNegative
 func (s *OssClientSuite) TestCreateBucketNegative(c *C) {
 	client, err := New(endpoint, accessID, accessKey)
@@ -944,7 +987,7 @@ func (s *OssClientSuite) TestSetBucketLifecycleAboutVersionObject(c *C) {
 	}
 
 	rule := LifecycleRule{
-        Status:            "Enabled",
+		Status:            "Enabled",
 		Expiration:        &expiration,
 		VersionExpiration: &versionExpiration,
 		VersionTransition: &versionTransition,
