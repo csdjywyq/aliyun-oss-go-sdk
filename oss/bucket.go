@@ -383,7 +383,7 @@ func (bucket Bucket) DoAppendObject(request *AppendObjectRequest, options []Opti
 	listener := getProgressListener(options)
 
 	handleOptions(headers, opts)
-	resp, err := bucket.Client.Conn.Do("POST", bucket.BucketName, request.ObjectKey, params, headers,
+	resp, err := bucket.Client.Conn.Do("PUT", bucket.BucketName, request.ObjectKey, params, headers,
 		request.Reader, initCRC, listener)
 
 	// get response header

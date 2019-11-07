@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/csdjywyq/aliyun-oss-go-sdk/oss"
 )
 
 // ArchiveSample archives sample

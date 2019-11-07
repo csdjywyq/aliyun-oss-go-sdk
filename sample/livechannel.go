@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"time"
 
-	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/csdjywyq/aliyun-oss-go-sdk/oss"
 )
 
 // CreateLiveChannelSample Samples for create a live-channel
